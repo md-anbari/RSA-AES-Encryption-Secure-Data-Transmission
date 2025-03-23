@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: server-app
+server:
+  port: 8086

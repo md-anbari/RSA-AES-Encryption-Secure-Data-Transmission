@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/client/src/main/java/dev/mdanabri/client/ClientApplication.java;/Users/mohammad.anbari/workspace/rsa-dsa-poc/shared/src/main/java/dev/mdanbari/shared/CryptoUtil.java;/Users/mohammad.anbari/workspace/rsa-dsa-poc/shared/src/main/java/dev/mdanbari/shared/Profile.java" />
+  </component>
+</project>
