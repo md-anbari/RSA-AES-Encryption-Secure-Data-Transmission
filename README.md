@@ -6,9 +6,9 @@ In this project, we use a combination of RSA and AES encryption to secure sensit
 ## Why RSA + AES?
 The decision to use both RSA and AES encryption comes from the need to address the limitations of each when used in isolation:
 
-- **RSA** (Rivest-Shamir-Adleman) is an asymmetric encryption algorithm that uses a pair of keys (public and private) to encrypt and decrypt data. It is ideal for securely exchanging small pieces of information, such as encryption keys. However, RSA has performance limitations when used to encrypt large datasets because the encryption and decryption processes are computationally expensive.
+- **RSA** is an asymmetric encryption algorithm that uses a pair of keys (public and private) to encrypt and decrypt data. It is ideal for securely exchanging small pieces of information, such as encryption keys. However, RSA has performance limitations when used to encrypt large datasets because the encryption and decryption processes are computationally expensive.
 
-- **AES** (Advanced Encryption Standard), in contrast, is a symmetric encryption algorithm that uses the same key for both encryption and decryption. AES is highly efficient and is suitable for encrypting large amounts of data. However, the main challenge with AES is securely sharing the key between the sender and the receiver.
+- **AES** , in contrast, is a symmetric encryption algorithm that uses the same key for both encryption and decryption. AES is highly efficient and is suitable for encrypting large amounts of data. However, the main challenge with AES is securely sharing the key between the sender and the receiver.
 
 By using **RSA to encrypt the AES key** and **AES to encrypt the actual data** (in this case, the profile), we can take advantage of the speed of AES for large data encryption while still ensuring that the AES key is exchanged securely using RSA.
 
@@ -17,7 +17,7 @@ By using **RSA to encrypt the AES key** and **AES to encrypt the actual data** (
 ## Encryption Details: RSA and AES
 
 ### RSA
-In this project, **RSA/ECB/OAEPWithSHA-256AndMGF1Padding** is used for RSA encryption. The `ECB` mode is used because it is a simple block-based encryption scheme. For RSA, this is typically acceptable since only the AES key is being encrypted. The `OAEPWithSHA-256AndMGF1Padding` padding scheme is used because it is more secure than older padding schemes such as PKCS#1. The OAEP (Optimal Asymmetric Encryption Padding) method with SHA-256 provides resistance against various cryptographic attacks.
+In this project, **RSA/ECB/OAEPWithSHA-256AndMGF1Padding** is used for RSA encryption. The `ECB` mode is used because it is a simple block-based encryption scheme. For RSA, this is typically acceptable since only the AES key is being encrypted. The `OAEPWithSHA-256AndMGF1Padding` padding scheme is used because it is more secure than older padding schemes such as PKCS#1. The OAEP method with SHA-256 provides resistance against various cryptographic attacks.
 
 **RSA Encryption**:
 ```java
@@ -38,7 +38,7 @@ public static byte[] rsaDecrypt(byte[] data, PrivateKey key) throws Exception {
 ```
 
 ### AES
-AES is used to encrypt the actual data. In this project, the **AES/GCM/NoPadding** mode is chosen. GCM (Galois/Counter Mode) is a secure and efficient mode of AES that provides both encryption and authentication (i.e., integrity check). The **NoPadding** scheme is used because GCM handles padding internally, and any extra padding would interfere with the algorithm.
+AES is used to encrypt the actual data. In this project, the **AES/GCM/NoPadding** mode is chosen. GCM (Galois/Counter Mode) is a secure and efficient mode of AES. The **NoPadding** scheme is used because GCM handles padding internally, and any extra padding would interfere with the algorithm.
 
 **AES Encryption**:
 ```java
@@ -61,13 +61,13 @@ public static byte[] aesDecrypt(AesPayload payload, SecretKey key) throws Except
 ```
 
 ### Why PEM and DER?
-- **DER** (Distinguished Encoding Rules) is a binary format for encoding data structures and is often used for storing keys. In Java, DER is a preferred format for handling private/public keys because it is a binary format that Java's cryptography libraries handle efficiently.
-- **PEM** (Privacy-Enhanced Mail) is a text-based encoding format that is more common in contexts like certificates. PEM files are often used when human readability is needed or when the keys need to be transferred over text-based protocols (like email).
+- **DER** is a binary format for encoding data structures and is often used for storing keys. In Java, DER is a preferred format for handling private/public keys because it is a binary format that Java's cryptography libraries handle efficiently.
+- **PEM** is a text-based encoding format that is more common in contexts like certificates. PEM files are often used when human readability is needed.
 
 In Java applications, **DER** is preferred for key storage as it is a compact and straightforward binary format. However, if the keys need to be accessed by other systems, PEM may be used, but extra handling is required to parse the text-based encoding.
 
 ### Secret Key Management
-In a real-world scenario, secrets such as RSA private keys, AES keys, and other sensitive information should be securely stored in a vault, such as **HashiCorp Vault**, **AWS Secrets Manager**, or **Azure Key Vault**. These tools ensure secure access control, auditing, and key management, preventing the keys from being hardcoded into the application code.
+In a real-world scenario, secrets such as RSA private keys, should be securely stored in a vault, such as **HashiCorp Vault**, **AWS Secrets Manager**, or **Azure Key Vault**. These tools ensure secure access control, auditing, and key management, preventing the keys from being hardcoded into the application code.
 
 ---
 
@@ -101,24 +101,6 @@ The project follows a modular Maven structure:
 - **shared**: Contains utility classes, including cryptographic functions.
 - **client**: The client application that encrypts the profile and sends it to the server.
 - **server**: The server application that decrypts the profile and handles requests.
-
----
-
-## Choosing the Right Encryption Modes and Padding
-
-### RSA Encryption Mode and Padding
-- **Mode**: `ECB` (Electronic Codebook) is used for RSA since we are only encrypting small amounts of data (the AES key). While `ECB` is not recommended for encrypting large blocks of data due to security concerns (e.g., identical plaintext blocks result in identical ciphertext blocks), it's acceptable in this context where RSA only encrypts the AES key.
-  
-- **Padding**: `OAEPWithSHA-256AndMGF1Padding` is chosen for RSA. OAEP (Optimal Asymmetric Encryption Padding) provides better security compared to older padding schemes like PKCS#1, protecting against certain types of attacks.
-
-For further reference on why these modes and padding schemes are selected, check out [this comparison on Medium](https://medium.com/@davidneilson/understanding-the-difference-between-padding-schemes-in-cryptography-15c0f9c538ff).
-
-### AES Encryption Mode and Padding
-- **Mode**: `GCM` (Galois/Counter Mode) is selected for AES because it provides both confidentiality and integrity. Unlike traditional block cipher modes like CBC, GCM automatically handles padding and provides built-in authentication, ensuring that the data hasn't been tampered with.
-  
-- **Padding**: `NoPadding` is used because GCM handles padding internally. Using extra padding would interfere with the encryption process and is unnecessary.
-
-These modes and padding selections optimize the performance and security of encryption, reducing vulnerabilities that could arise from other configurations.
 
 ---
 
