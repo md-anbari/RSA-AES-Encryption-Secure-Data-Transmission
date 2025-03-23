@@ -1,5 +1,5 @@
 
-# RSA + AES Encryption: A Combination for Secure Profile Data Transmission
+# RSA + AES Encryption: A Combination for Secure Data Transmission
 
 In this project, we use a combination of RSA and AES encryption to secure sensitive profile data during transmission. This combination is chosen because it combines the strengths of both algorithms, offering a balance between security and performance.
 
